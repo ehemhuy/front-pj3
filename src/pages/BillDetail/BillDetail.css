@@ -1,0 +1,12 @@
+.billDetail{
+    margin: 40px 20px 20px 20px;
+}
+
+.billDetail_img{
+    display: inline-block;
+}
+.billDetail_img img{
+    max-width: 25%;
+    border-radius: 5px;
+    height: auto;
+}

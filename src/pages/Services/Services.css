@@ -1,0 +1,41 @@
+.service_search{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.service_searchBox{
+    
+}
+.inputSearch{
+    width: 300px;
+}
+.service_searchResult{
+    padding-left: 15px;
+    margin-top: 5px;
+    display: none;
+    display: flex;
+    cursor: pointer;
+    flex-direction: column;
+}
+.service_searchResult a{
+    margin: 2px;
+    text-decoration: none;
+    color: black;
+}
+.service_searchResult a span:hover{
+    -webkit-transform: rotate(-90deg); 
+    -moz-transform: rotate(-90deg);
+}
+.service_searchResult p:hover{
+    background-color: black;
+    color: white;
+}
+input:focus + .service_searchResult{
+    display: flex;
+}
+
+
+
+.cardService-img{
+    max-height: 242px;
+}
