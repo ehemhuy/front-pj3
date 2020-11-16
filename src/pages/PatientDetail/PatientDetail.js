@@ -1,14 +1,17 @@
 import Axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Form, Col, Button } from "react-bootstrap";
+import { Form, Col, Button, InputGroup } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "./PatientDetail.css";
+import download from 'downloadjs'
+
 export default function PatientDetail(props) {
   const billId = props.match.params.id;
   const [data, setData] = useState({});
   const [tuan, setTuan] = useState([]);
   const [info, setInfo] = useState(null);
   const [postSuccessed, setPostSuccessed] = useState(0);
+  const [displayGetBill, setDisplayGetBill] = useState('none')
   useEffect(() => {
     Axios.get(`/user/patients/${billId}`)
       .then((res) => {
@@ -38,6 +41,7 @@ export default function PatientDetail(props) {
       toast.success("Thành công");
       let c = postSuccessed + 1
       setPostSuccessed(c);
+      setDisplayGetBill('block')
     });
   }
 
@@ -48,7 +52,14 @@ export default function PatientDetail(props) {
     clone[name] = value;
     setInfo(clone);
   }
-
+  function getHoaDon(){
+    Axios.get(`/service/getDocx/${billId}`)
+    .then( res  => {
+      const blob = res.blob()
+      download(blob, 'hoadon.docx')
+    })
+    .catch(err => {})
+  }
   return (
     <div>
       <div
@@ -63,7 +74,7 @@ export default function PatientDetail(props) {
         <ToastContainer autoClose={1300} />
         <Form onSubmit={handleSubmit}>
           <Form.Row>
-            <Form.Group as={Col} controlId="formGridState">
+            <Form.Group xs={1} controlId="formGridState">
               <Form.Label>Tuần</Form.Label>
               <Form.Control
                 as="select"
@@ -80,6 +91,8 @@ export default function PatientDetail(props) {
             <Form.Group as={Col} controlId="formGridCity">
               <Form.Label>Tình trạng bệnh nhân</Form.Label>
               <Form.Control
+                as="textarea"
+                rows={3}
                 name="tinhtrang"
                 onChange={handleChange}
                 value={info?.tinhtrang}
@@ -87,20 +100,25 @@ export default function PatientDetail(props) {
               />
             </Form.Group>
             <Form.Group as={Col} controlId="formGridCity">
-              <Form.Label>Thuốc</Form.Label>
-              <Form.Control
-                name="thuoc"
-                onChange={handleChange}
-                value={info?.thuoc}
-                required
-              />
-            </Form.Group>
-            <Form.Group as={Col} controlId="formGridCity">
               <Form.Label>Ngày hẹn tiếp</Form.Label>
-              <Form.Control
+              <br/>
+              <input
+                type="date"
                 name="nextday"
                 onChange={handleChange}
                 value={info?.nextday}
+                required
+              />
+            </Form.Group>
+          </Form.Row>
+          <Form.Row>
+          <Form.Group as={Col} controlId="formGridCity">
+              <Form.Label>Thuốc</Form.Label>
+              <Form.Control
+                xs={2}
+                name="thuoc"
+                onChange={handleChange}
+                value={info?.thuoc}
                 required
               />
             </Form.Group>
@@ -117,6 +135,7 @@ export default function PatientDetail(props) {
           <Button variant="primary" type="submit">
             Submit
           </Button>
+          <Button variant="info" style={{display: `${displayGetBill}`}} onClick={getHoaDon}>Xuất hóa đơn</Button>
         </Form>
         {data.chitiet?.map((dt) => (
           <div className="week">
@@ -125,7 +144,7 @@ export default function PatientDetail(props) {
             <br />
             <span>Thuốc: {dt.thuoc}</span>
             <br />
-            <span>Ngày khám kế tiếp: {data.nextDay}</span>
+            <span>Ngày khám kế tiếp: {dt.nextDay}</span>
             <br />
             <span>Hình ảnh buổi khám:</span> <br />
             <div className="billDetail_img">
