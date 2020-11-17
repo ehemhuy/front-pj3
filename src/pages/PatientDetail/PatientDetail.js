@@ -21,8 +21,8 @@ export default function PatientDetail(props) {
       .then((res) => {
         for (let i = 1; i <= res.data.data.lotrinh; i++) tuan.push(i);
         setData(res.data.data);
-        setThuoc(res.data.data.chitiet)
-        console.log(res.data.data)
+        setThuoc(res.data.data.chitiet);
+        console.log(res.data.data);
       })
       .catch((err) => {});
   }, [postSuccessed]);
@@ -61,6 +61,7 @@ export default function PatientDetail(props) {
   function getHoaDon() {
     Axios.get(`/service/getDocx/${billId}`)
       .then((res) => {
+        console.log(res);
         const blob = res.blob();
         download(blob, "hoadon.docx");
       })
@@ -140,6 +141,7 @@ export default function PatientDetail(props) {
                 <th>Tên thuốc</th>
                 <th>Số lượng</th>
                 <th>Cách dùng</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -165,19 +167,23 @@ export default function PatientDetail(props) {
                     </td>
                     <td>
                       <Form.Control
+                        as="textarea"
+                        rows={1}
                         name="cachdung"
                         onChange={(e) => handleInputChange(e, index)}
                         value={n.cachdung}
                         required
                       />
                     </td>
+                    <td>
+                      {numThuoc.length !== 1 && (
+                        <Button variant="warning" onClick={() => handleRemoveClick(index)}>
+                          Remove
+                        </Button>
+                      )}
+                    </td>
                   </tr>
                   <div className="btn-box">
-                    {numThuoc.length !== 1 && (
-                      <Button onClick={() => handleRemoveClick(index)}>
-                        Remove
-                      </Button>
-                    )}
                     {numThuoc.length - 1 === index && (
                       <Button onClick={handleAddClick}>Add</Button>
                     )}
@@ -188,7 +194,7 @@ export default function PatientDetail(props) {
           </Table>
 
           <Form.Group>
-            <Form.Label>Ảnh:</Form.Label>
+            <Form.Label>Ảnh bệnh nhân :</Form.Label>
             <br></br>
             <input
               type="file"
@@ -221,14 +227,14 @@ export default function PatientDetail(props) {
                 <td>Số lượng</td>
                 <td>Cách dùng</td>
               </tr>
-              {dt.thuoc?.map((t, index) => 
+              {dt.thuoc?.map((t, index) => (
                 <tr>
                   <td>{index}</td>
                   <td>{t.tenthuoc}</td>
                   <td>{t.soluong}</td>
                   <td>{t.cachdung}</td>
                 </tr>
-              )}
+              ))}
             </table>
             <br />
             <span>Ngày khám kế tiếp: {dt.nextDay}</span>

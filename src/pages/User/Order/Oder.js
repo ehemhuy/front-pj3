@@ -1,7 +1,7 @@
 import axios from "axios";
 import classNames from "classnames";
 import React, { Component } from "react";
-import { confirmAlert } from "react-confirm-alert"; // Import
+import { confirmAlert } from "react-confirm-alert"; 
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { Link } from "react-router-dom";
 import "./Order.css";
@@ -142,15 +142,12 @@ export default class Order extends Component {
                 </li>
               </ul>
             </div>
-
             <br />
-
             <div className="card">
               <table class="table">
                 <thead>
                   <tr>
                     <th>ID</th>
-                    {/* <th>Name</th> */}
                     <th>SĐT</th>
                     <th>Địa chỉ</th>
                     <th>Giá</th>
@@ -163,7 +160,6 @@ export default class Order extends Component {
                     return (
                       <tr>
                         <td>{index}</td>
-                        {/* <td>{order.userName} {order.firstName}</td> */}
                         <td>{order.phone}</td>
                         <td>{order.address}</td>
                         <td>{order.totalMoney}</td>
