@@ -1,22 +1,28 @@
 import Axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Form, Col, Button, InputGroup } from "react-bootstrap";
+import { Form, Col, Button, InputGroup, Table } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "./PatientDetail.css";
-import download from 'downloadjs'
+import download from "downloadjs";
 
 export default function PatientDetail(props) {
   const billId = props.match.params.id;
+  const [numThuoc, setNumThuoc] = useState([
+    { tenthuoc: "", soluong: "", cachdung: "" },
+  ]);
   const [data, setData] = useState({});
   const [tuan, setTuan] = useState([]);
+  const [thuoc, setThuoc] = useState([]);
   const [info, setInfo] = useState(null);
   const [postSuccessed, setPostSuccessed] = useState(0);
-  const [displayGetBill, setDisplayGetBill] = useState('none')
+  const [displayGetBill, setDisplayGetBill] = useState("none");
   useEffect(() => {
     Axios.get(`/user/patients/${billId}`)
       .then((res) => {
         for (let i = 1; i <= res.data.data.lotrinh; i++) tuan.push(i);
         setData(res.data.data);
+        setThuoc(res.data.data.chitiet)
+        console.log(res.data.data)
       })
       .catch((err) => {});
   }, [postSuccessed]);
@@ -29,7 +35,7 @@ export default function PatientDetail(props) {
     });
     formData.append("tuan", info.tuan);
     formData.append("tinhtrang", info.tinhtrang);
-    formData.append("thuoc", info.thuoc);
+    formData.append("thuoc", JSON.stringify(numThuoc));
     formData.append("nextday", info.nextday);
     formData.append("id", billId);
     const config = {
@@ -39,9 +45,9 @@ export default function PatientDetail(props) {
     };
     Axios.post("/user/postInfoPatient", formData, config).then((res) => {
       toast.success("Thành công");
-      let c = postSuccessed + 1
+      let c = postSuccessed + 1;
       setPostSuccessed(c);
-      setDisplayGetBill('block')
+      setDisplayGetBill("block");
     });
   }
 
@@ -52,14 +58,30 @@ export default function PatientDetail(props) {
     clone[name] = value;
     setInfo(clone);
   }
-  function getHoaDon(){
+  function getHoaDon() {
     Axios.get(`/service/getDocx/${billId}`)
-    .then( res  => {
-      const blob = res.blob()
-      download(blob, 'hoadon.docx')
-    })
-    .catch(err => {})
+      .then((res) => {
+        const blob = res.blob();
+        download(blob, "hoadon.docx");
+      })
+      .catch((err) => {});
   }
+
+  const handleRemoveClick = (index) => {
+    const list = [...numThuoc];
+    list.splice(index, 1);
+    setNumThuoc(list);
+  };
+
+  const handleAddClick = () => {
+    setNumThuoc([...numThuoc, { tenthuoc: "", soluong: "", cachdung: "" }]);
+  };
+  const handleInputChange = (e, index) => {
+    const { name, value } = e.target;
+    const list = [...numThuoc];
+    list[index][name] = value;
+    setNumThuoc(list);
+  };
   return (
     <div>
       <div
@@ -101,7 +123,7 @@ export default function PatientDetail(props) {
             </Form.Group>
             <Form.Group as={Col} controlId="formGridCity">
               <Form.Label>Ngày hẹn tiếp</Form.Label>
-              <br/>
+              <br />
               <input
                 type="date"
                 name="nextday"
@@ -111,19 +133,63 @@ export default function PatientDetail(props) {
               />
             </Form.Group>
           </Form.Row>
-          <Form.Row>
-          <Form.Group as={Col} controlId="formGridCity">
-              <Form.Label>Thuốc</Form.Label>
-              <Form.Control
-                xs={2}
-                name="thuoc"
-                onChange={handleChange}
-                value={info?.thuoc}
-                required
-              />
-            </Form.Group>
-          </Form.Row>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tên thuốc</th>
+                <th>Số lượng</th>
+                <th>Cách dùng</th>
+              </tr>
+            </thead>
+            <tbody>
+              {numThuoc.map((n, index) => (
+                <>
+                  <tr>
+                    <td>{index + 1}</td>
+                    <td>
+                      <Form.Control
+                        name="tenthuoc"
+                        onChange={(e) => handleInputChange(e, index)}
+                        value={n.tenthuoc}
+                        required
+                      />
+                    </td>
+                    <td>
+                      <Form.Control
+                        name="soluong"
+                        onChange={(e) => handleInputChange(e, index)}
+                        value={n.soluong}
+                        required
+                      />
+                    </td>
+                    <td>
+                      <Form.Control
+                        name="cachdung"
+                        onChange={(e) => handleInputChange(e, index)}
+                        value={n.cachdung}
+                        required
+                      />
+                    </td>
+                  </tr>
+                  <div className="btn-box">
+                    {numThuoc.length !== 1 && (
+                      <Button onClick={() => handleRemoveClick(index)}>
+                        Remove
+                      </Button>
+                    )}
+                    {numThuoc.length - 1 === index && (
+                      <Button onClick={handleAddClick}>Add</Button>
+                    )}
+                  </div>
+                </>
+              ))}
+            </tbody>
+          </Table>
+
           <Form.Group>
+            <Form.Label>Ảnh:</Form.Label>
+            <br></br>
             <input
               type="file"
               name="imgs"
@@ -135,14 +201,35 @@ export default function PatientDetail(props) {
           <Button variant="primary" type="submit">
             Submit
           </Button>
-          <Button variant="info" style={{display: `${displayGetBill}`}} onClick={getHoaDon}>Xuất hóa đơn</Button>
+          <Button
+            variant="info"
+            style={{ display: `${displayGetBill}` }}
+            onClick={getHoaDon}
+          >
+            Xuất hóa đơn
+          </Button>
         </Form>
         {data.chitiet?.map((dt) => (
           <div className="week">
             <h1>Tuần số {dt.tuan}</h1>
             <span>Tình trạng: {dt.tinhtrang}</span>
             <br />
-            <span>Thuốc: {dt.thuoc}</span>
+            <table className="thuoc_table">
+              <tr>
+                <td>#</td>
+                <td>Tên thuốc</td>
+                <td>Số lượng</td>
+                <td>Cách dùng</td>
+              </tr>
+              {dt.thuoc?.map((t, index) => 
+                <tr>
+                  <td>{index}</td>
+                  <td>{t.tenthuoc}</td>
+                  <td>{t.soluong}</td>
+                  <td>{t.cachdung}</td>
+                </tr>
+              )}
+            </table>
             <br />
             <span>Ngày khám kế tiếp: {dt.nextDay}</span>
             <br />

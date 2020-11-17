@@ -28,7 +28,7 @@ export default function BillDetail(props) {
             <br />
             <span>Thuốc: {dt.thuoc}</span>
             <br />
-            <span>Ngày khám kế tiếp: {data.nextDay}</span>
+            <span>Ngày khám kế tiếp: {dt.nextDay}</span>
             <br />
             <span>Hình ảnh buổi khám:</span>
             <br />
