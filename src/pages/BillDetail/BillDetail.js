@@ -25,8 +25,23 @@ export default function BillDetail(props) {
           <div className="week">
             <h1>Tuần số {dt.tuan}</h1>
             <span>Tình trạng: {dt.tinhtrang}</span>
-            <br />
-            <span>Thuốc: {dt.thuoc}</span>
+            <br /><br/>
+            <table className="thuoc_table">
+              <tr>
+                <td>#</td>
+                <td>Tên thuốc</td>
+                <td>Số lượng</td>
+                <td>Cách dùng</td>
+              </tr>
+              {dt.thuoc?.map((t, index) => 
+                <tr>
+                  <td>{index}</td>
+                  <td>{t.tenthuoc}</td>
+                  <td>{t.soluong}</td>
+                  <td>{t.cachdung}</td>
+                </tr>
+              )}
+            </table>
             <br />
             <span>Ngày khám kế tiếp: {dt.nextDay}</span>
             <br />

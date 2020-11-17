@@ -217,7 +217,7 @@ export default class Order extends Component {
                     <div class="modal-body">
                       <p>ID đơn hàng: {detailOrder._id}</p>
                       <p>Tên người nhận: {detailOrder.userName}</p>
-                      <p>Địa chỉ: {detailOrder.adress}</p>
+                      <p>Địa chỉ: {detailOrder.address}</p>
                       <p>Số điện thoại: {detailOrder.phone}</p>
                       <br />
 
