@@ -61,7 +61,6 @@ export default function PatientDetail(props) {
   function getHoaDon() {
     Axios.get(`/service/getDocx/${billId}`)
       .then((res) => {
-        console.log(res);
         const blob = res.blob();
         download(blob, "hoadon.docx");
       })
