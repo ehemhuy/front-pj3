@@ -12,9 +12,7 @@ export default function HistoryBooking() {
   useEffect(() => {
     axios.get("/bill/billUser").then((res) => {
       setBills(res.data);
-      let cl = [];
-      for (let i = 0; i < res.data.length; i++) cl.push(false);
-      setShow(cl);
+      console.log(res.data);
     });
   }, []);
   const handleShow = (index) => {
@@ -45,7 +43,8 @@ export default function HistoryBooking() {
               <th width="15%">Lộ trình</th>
               <th width="18%">Ngày hẹn tiếp theo</th>
               <th width="13%">Giá</th>
-              <th width="15%">Action</th>
+              <th width="10%">Trạng thái</th>
+              <th width="5%">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -61,6 +60,11 @@ export default function HistoryBooking() {
                   <td>{dt._doc.lotrinh} tuần</td>
                   <td>{dt._doc.nextDay}</td>
                   <td>{dt._doc.price} đồng</td>
+                  {dt._doc.isCompleted ? (
+                    <td>Đã hoàn thành</td>
+                  ) : (
+                    <td>Chưa hoàn thành</td>
+                  )}
                   <td>
                     <Button>
                       <Link
@@ -82,9 +86,13 @@ export default function HistoryBooking() {
                     <Modal.Title>Thông tin bác sĩ</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                    <span>Tên bác sĩ: {dt.bacsi.firstName + ' ' + dt.bacsi.lastName}</span><br/>
                     <span>
-                      SĐT: <a href={`tel:${dt.bacsi.phone}`}>{dt.bacsi.phone}</a>
+                      Tên bác sĩ: {dt.bacsi.firstName + " " + dt.bacsi.lastName}
+                    </span>
+                    <br />
+                    <span>
+                      SĐT:{" "}
+                      <a href={`tel:${dt.bacsi.phone}`}>{dt.bacsi.phone}</a>
                     </span>
                     <p>{dt.bacsi.description}</p>
                   </Modal.Body>
