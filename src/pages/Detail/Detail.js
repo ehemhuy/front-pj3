@@ -202,9 +202,10 @@ function Detail(props) {
           style={{
             backgroundImage:
               "url(https://themegoods-cdn-pzbycso8wng.stackpathdns.com/grandspa/demo/wp-content/uploads/2017/02/369127.jpg)",
+              maxHeight: "200px"
           }}
         >
-          <div className="overlay_background1">
+          <div className="overlay_background1" style={{maxHeight: "200px"}}>
             <h2
               style={{ fontFamily: "Lucida Sans Unicode, Courier, monospace" }}
             >
@@ -256,6 +257,9 @@ function Detail(props) {
                   </Button>
                   <div className="underAdd">
                     <b>Danh mục:</b> {product.category.name}
+                  </div>
+                  <div className="underAdd">
+                    <b>Quốc gia:</b> {product.country}
                   </div>
                 </div>
               </Col>

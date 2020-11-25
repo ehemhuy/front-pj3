@@ -1,25 +1,11 @@
-import TextField from "@material-ui/core/TextField";
 import axios from "axios";
-import CKEditor from "ckeditor4-react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {
-    FormGroup,
-
-    Input, Label
-} from "reactstrap";
+import { FormGroup, Input, Label } from "reactstrap";
 import LayoutTableAdmin from "../Layout/LayoutTableAdmin";
-
-
-function convertStringLong(string) {
-  console.log("độ dài là ", string.length);
-  if (string.length > 93) {
-    let clone = string.slice(0, 93);
-    return clone.concat("...");
-  } else return string;
-}
+import { TextField } from "@material-ui/core";
 
 function Product(props) {
   const [products, setProducts] = useState([]);
@@ -37,7 +23,6 @@ function Product(props) {
 
   useEffect(() => {
     axios.get("/category").then((res) => {
-      console.table(res.data);
       setCategories(res.data);
     });
   }, []);
@@ -47,13 +32,6 @@ function Product(props) {
     let value = e.target.files ? e.target.files[0] : e.target.value;
     let add = { ...newProduct };
     add[name] = value;
-    console.log(add)
-    setNewProduct(add);
-  }
-
-  function handleAddDescription(e) {
-    let add = { ...newProduct };
-    add.description = e.editor.getData();
     setNewProduct(add);
   }
 
@@ -61,9 +39,7 @@ function Product(props) {
     let formDataNew = new FormData();
     Object.keys(data).forEach((key) => {
       formDataNew.append(key, data[key]);
-      // console.log(key + "=" + data[key])
     });
-
     return formDataNew;
   }
 
@@ -73,7 +49,8 @@ function Product(props) {
       setNewProduct({ category: categories[0]._id });
   }
 
-  function addProduct() {
+  function addProduct(e) {
+    e.preventDefault();
     console.table(newProduct);
     let preForm = convertFormData(newProduct);
     axios
@@ -87,8 +64,6 @@ function Product(props) {
       .catch((err) => {
         toast.error("thêm sản phẩm thất bại");
       });
-
-    console.table(newProduct);
   }
 
   function deleteProduct(index, product) {
@@ -103,12 +78,6 @@ function Product(props) {
       .catch((err) => {
         toast.error("xoá sản phẩm thất bại");
       });
-  }
-
-  function handleEditDescription(e) {
-    let add = { ...newProduct };
-    add.description = e.editor.getData();
-    setNewProduct(add);
   }
 
   function handleEdit(e) {
@@ -126,15 +95,16 @@ function Product(props) {
     setEditProduct(currentProduct);
   }
 
-  function onEditProduct() {
+  function onEditProduct(e) {
+    e.preventDefault();
     let cloneEditProduct = { ...editProduct };
     const index = products.findIndex(
       (product) => product._id === editProduct._id
     );
-    console.log("index", index);
     let preForm = convertFormData(cloneEditProduct);
+    console.log(cloneEditProduct);
     axios
-      .patch(`/product/${cloneEditProduct._id}`, preForm)
+      .post(`/product/${cloneEditProduct._id}`, preForm)
       .then((res) => {
         let productsNew = [...products];
         productsNew.splice(index, 1, res.data);
@@ -144,18 +114,12 @@ function Product(props) {
       .catch((err) => {
         toast.error("sửa sản phẩm thất bại");
       });
-
-    console.table(cloneEditProduct);
-    console.log(
-      "category hiện tại",
-      categories.find((e) => e._id == cloneEditProduct.category)
-    );
   }
 
   return (
     <>
       <LayoutTableAdmin>
-        <ToastContainer autoClose={1300}/>
+        <ToastContainer autoClose={1300} />
 
         <div class="product-admin">
           <h2>Các sản phẩm</h2>
@@ -177,8 +141,8 @@ function Product(props) {
                   <th>ID</th>
                   <th>Image</th>
                   <th>Tên sản phẩm</th>
-                  {/* <th>Description</th> */}
                   <th>Tổng quan</th>
+                  <th>Quốc gia</th>
                   <th>Giá</th>
                   <th>Action</th>
                 </tr>
@@ -194,9 +158,8 @@ function Product(props) {
                         </Link>
                       </td>
                       <td>{product.name}</td>
-                      {/* <td><a href="">Detail</a></td> */}
-                      <td width={400}>{convertStringLong(product.summary)}</td>
-
+                      <td width={300}>{product.summary}</td>
+                      <td>{product.country}</td>
                       <td>{product.price}</td>
                       <td>
                         <form class="form-group">
@@ -238,7 +201,7 @@ function Product(props) {
             </div>
 
             <div class="modal-body">
-              <form>
+              <form onSubmit={addProduct}>
                 <TextField
                   id="name"
                   label="Tên sản phẩm"
@@ -249,6 +212,7 @@ function Product(props) {
                   onChange={handleNew}
                   autoFocus
                   margin="normal"
+                  required
                 />
 
                 <TextField
@@ -261,6 +225,7 @@ function Product(props) {
                   value={newProduct?.price || ""}
                   onChange={handleNew}
                   margin="normal"
+                  required
                 />
 
                 <TextField
@@ -274,6 +239,7 @@ function Product(props) {
                   value={newProduct?.summary || ""}
                   onChange={handleNew}
                   margin="normal"
+                  required
                 />
 
                 <div class="form-group">
@@ -290,7 +256,23 @@ function Product(props) {
                     ))}
                   </select>
                 </div>
-
+                <div class="form-group">
+                  <label for="country">Quốc gia</label>
+                  <select
+                    class="form-control"
+                    id="country"
+                    name="country"
+                    onChange={handleNew}
+                    value={newProduct?.country}
+                  >
+                    <option>Việt Nam</option>
+                    <option>Trung Quốc</option>
+                    <option>Nhật Bản</option>
+                    <option>Hàn Quốc</option>
+                    <option>Mỹ</option>
+                    <option>Nước khác</option>
+                  </select>
+                </div>
                 <FormGroup>
                   <Label for="imgUrl">Chọn ảnh</Label>
                   <Input
@@ -298,32 +280,37 @@ function Product(props) {
                     type="file"
                     name="imgUrl"
                     placeholder="chọn ảnh"
+                    required
                   />
                 </FormGroup>
 
                 <label htmlFor="contained-button-file">
-                  Mô tả
-                  <CKEditor
-                    data={newProduct?.description || ""}
+                  Mô tả<br></br>
+                  <Input
+                    type="textarea"
+                    value={newProduct?.description || ""}
                     name="description"
-                    onChange={handleAddDescription}
+                    onChange={handleNew}
+                    required
                   />
                 </label>
+                <div class="modal-footer">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    data-dismiss="modal"
+                  >
+                    Thêm
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger"
+                    data-dismiss="modal"
+                  >
+                    Hủy
+                  </button>
+                </div>
               </form>
-            </div>
-
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-primary"
-                onClick={addProduct}
-                data-dismiss="modal"
-              >
-                Thêm
-              </button>
-              <button type="button" class="btn btn-danger" data-dismiss="modal">
-                Hủy
-              </button>
             </div>
           </div>
         </div>
@@ -393,7 +380,23 @@ function Product(props) {
                       ))}
                     </select>
                   </div>
-
+                  <div class="form-group">
+                    <label for="country">Quốc gia</label>
+                    <select
+                      class="form-control"
+                      id="country"
+                      name="country"
+                      onChange={handleEdit}
+                      value={newProduct?.country}
+                    >
+                      <option>Việt Nam</option>
+                      <option>Trung Quốc</option>
+                      <option>Nhật Bản</option>
+                      <option>Hàn Quốc</option>
+                      <option>Mỹ</option>
+                      <option>Nước khác</option>
+                    </select>
+                  </div>
                   <FormGroup>
                     <Label for="imgUrl">Chọn ảnh</Label>
                     <Input
@@ -405,28 +408,33 @@ function Product(props) {
                   </FormGroup>
                   <label htmlFor="contained-button-file">
                     Mô tả
-                    <CKEditor
+                    <br />.
+                    <Input
+                      type="textarea"
                       name="description"
-                      data={editProduct?.description || null}
-                      onChange={handleEditDescription}
+                      value={editProduct?.description || null}
+                      onChange={handleEdit}
                     />
                   </label>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      onClick={onEditProduct}
+                      class="btn btn-primary"
+                      data-dismiss="modal"
+                    >
+                      <i class="far fa-save"></i>&ensp;Lưu
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      data-dismiss="modal"
+                    >
+                      Hủy
+                    </button>
+                  </div>
                 </form>
               )}
-            </div>
-
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-primary"
-                onClick={onEditProduct}
-                data-dismiss="modal"
-              >
-                <i class="far fa-save"></i>&ensp;Lưu
-              </button>
-              <button type="button" class="btn btn-danger" data-dismiss="modal">
-                Hủy
-              </button>
             </div>
           </div>
         </div>
