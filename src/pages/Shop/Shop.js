@@ -197,7 +197,7 @@ class Shop extends Component {
                 (product, index) =>
                   product.price >= this.state.start &&
                   product.price <= this.state.end && (
-                    <Col md="3" style={{ marginTop: "20px" }} key={index}>
+                    <Col className="product-item" md="3" style={{ marginTop: "20px" }} key={index}>
                       <Link to={`/product/${product._id}`} className="product">
                         <div
                           style={{ display: "flex", justifyContent: "center" }}
@@ -221,7 +221,7 @@ class Shop extends Component {
                   product.price >= this.state.start &&
                   product.price <= this.state.end &&
                   product.country == country && (
-                    <Col md="3" style={{ marginTop: "20px" }} key={index}>
+                    <Col className="product-item" md="3" style={{ marginTop: "20px" }} key={index}>
                       <Link to={`/product/${product._id}`} className="product">
                         <div
                           style={{ display: "flex", justifyContent: "center" }}
@@ -245,7 +245,7 @@ class Shop extends Component {
                   product.price >= this.state.start &&
                   product.price <= this.state.end &&
                   product.category.name == category && (
-                    <Col md="3" style={{ marginTop: "20px" }} key={index}>
+                    <Col className="product-item" md="3" style={{ marginTop: "20px" }} key={index}>
                       <Link to={`/product/${product._id}`} className="product">
                         <div
                           style={{ display: "flex", justifyContent: "center" }}
@@ -270,7 +270,7 @@ class Shop extends Component {
                   product.price <= this.state.end &&
                   product.category.name == category &&
                   product.country == country && (
-                    <Col md="3" style={{ marginTop: "20px" }} key={index}>
+                    <Col className="product-item" md="3" style={{ marginTop: "20px" }} key={index}>
                       <Link to={`/product/${product._id}`} className="product">
                         <div
                           style={{ display: "flex", justifyContent: "center" }}

@@ -32,3 +32,9 @@
 .shop_product-img{
     max-width: 100px;
 }
+
+.product-item:hover{
+    border-radius: 50%;
+    background-color: #cbe8ca;
+    transition: 0.4s;
+}
