@@ -110,7 +110,16 @@ export default class Services extends Component {
                       ></img>
                       <div className="serviceContent">
                         <h3>{item.name}</h3>
-                        <p>{item.description}</p>
+                        <p
+                          style={{
+                            width: "250px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {item.description}
+                        </p>
                         <Link to={`/service/${item._id}`} className="readmore">
                           Xem thêm ..
                         </Link>

@@ -17,7 +17,7 @@ function Product(props) {
   useEffect(() => {
     axios.get("/product").then((res) => {
       console.table(res.data);
-      setProducts(res.data);
+      setProducts(res.data.listProduct);
     });
   }, []);
 
@@ -298,7 +298,6 @@ function Product(props) {
                   <button
                     type="submit"
                     class="btn btn-primary"
-                    data-dismiss="modal"
                   >
                     Thêm
                   </button>

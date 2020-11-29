@@ -92,7 +92,8 @@ export default function ServiceDetail(props) {
                 <strong>Tên dịch vụ: </strong> <span>{data.name}</span>
                 <br />
                 <span>Giá: {data.price} $</span> <br />
-                <span>Lộ trình: {data.lotrinh} tuần</span>
+                <span>Lộ trình: {data.lotrinh} tuần</span> <br/>
+                <span>Mô tả: {data.description}</span>
               </div>
             </div>
             <Button onClick={handleOpen}>Đăng ký dịch vụ</Button>
